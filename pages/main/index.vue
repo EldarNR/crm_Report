@@ -1,20 +1,16 @@
 <template>
-    <div class="flex">
-        <navbar class="w-[220px]" />
-        <section class="bg-white border-2 rounded-md divide-slate-200">
+    <ClientOnly>
+        <div class="bg-white border-2 rounded-md divide-slate-200">
             <div>
                 <header-main />
-
                 <div class="mt-8">
-                    <div class="lg:grid  grid-cols-12">
+                    <div class="w-full bg-neutral-50 rounded-lg shadow border">
                         <tables />
-
-
                     </div>
                 </div>
             </div>
-        </section>
-    </div>
+        </div>
+    </ClientOnly>
 </template>
 
 <script setup lang="ts">

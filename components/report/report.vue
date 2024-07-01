@@ -1,5 +1,5 @@
 <template>
-    <div class="border-4 rounded-md">
+    <div class="rounded-md">
         <div>
             <headerReport :name="report?.list.full_name
                 ?? ''" :date="report?.list.created_at ?? ''" :email="report?.list.email ?? ''"

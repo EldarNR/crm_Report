@@ -22,6 +22,7 @@ export const useStorage = defineStore({
       auth: {
         alert: false as boolean,
         message: "" as string,
+        title: "" as string,
         svg: "" as string,
       },
     },
@@ -45,9 +46,11 @@ export const useStorage = defineStore({
       if (checker === "Error") {
         this.Error.auth.message = message;
         this.Error.auth.alert = true;
+        this.Error.auth.title = "Error";
         closeAlert();
       } else if (checker === "Success") {
         this.Error.auth.message = message;
+        this.Error.auth.title = "Success";
         this.Error.auth.alert = true;
         closeAlert();
       }
@@ -173,7 +176,7 @@ export const useStorage = defineStore({
       } catch (e) {
         this.RangeError("Ошибка! " + e, "Error");
       } finally {
-        this.AllOrganization.loading = !this.AllOrganization.loading;
+        this.AllOrganization.loading = false;
       }
     },
 
@@ -230,6 +233,8 @@ export const useStorage = defineStore({
         console.log(data);
       } catch (e) {
         console.log(e);
+      } finally {
+        this.getAllOrganization();
       }
     },
     async removeOrganization(id: number) {

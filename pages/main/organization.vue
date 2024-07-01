@@ -1,55 +1,115 @@
 <template>
     <div>
+
         organization
-        <div v-if="!loading">
-            <div v-for="item in list" :key="item.id">{{ item }}</div>
+        <div>
+            <div v-if="!loading">
+                <div v-for="item in list" :key="item.id">{{ item }}</div>
+            </div>
+            <div v-else>
+                loading
+            </div>
+
+            <Modal :title="'Создание формы'" :description="'Заполните форму'">
+                <template v-slot:trigger>
+                    <Button variant="outline">Новая организацию</Button>
+                </template>
+                <template v-slot:body>
+                    <div class="grid grid-cols-4 items-center gap-4" v-for="(item, i) in text" :key="i">
+                        <Label for="name" class="text-right text-xs">
+                            {{ item.title }}
+                        </Label>
+                        <Input v-model="data[item.modal]" :placeholder="'пример: ' + item.title" class="col-span-3" />
+                    </div>
+                </template>
+                <template v-slot:footer>
+                    <Button type="submit" @click="postOrganization()">
+                        Save changes
+                    </Button>
+                </template>
+            </Modal>
+
+
+            <Table>
+
+                <TableCaption>A list of your recent invoices.</TableCaption>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead class="w-[100px]">
+                            #
+                        </TableHead>
+                        <TableHead>id</TableHead>
+                        <TableHead>Организация</TableHead>
+                        <TableHead class="text-right">
+                            Жалобы
+                        </TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    <TableRow v-for="(item, i) in list" :key="item.id">
+                        <TableCell class="font-medium">
+                            {{ i }}
+                        </TableCell>
+                        <TableCell>{{ item.idDepartament }}</TableCell>
+                        <TableCell>{{ item.name }}</TableCell>
+                        <TableCell class="text-right">
+                            4
+                        </TableCell>
+                        <TableCell>
+
+                            <DropdownMenu>
+                                <DropdownMenuTrigger as-child>
+                                    <span class="">...</span>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent class="w-56">
+                                    <DropdownMenuLabel>Setting</DropdownMenuLabel>
+                                    <DropdownMenuItem>
+
+                                        <Modal :title="'Создание формы'" :description="'Заполните форму'">
+                                            <template v-slot:trigger>
+                                                <span @click.stop>Edit</span>
+                                            </template>
+                                            <template v-slot:body>
+                                                <div class="grid grid-cols-4 items-center gap-4">
+                                                    <Label for="name" class="text-right text-xs">
+                                                        Называние
+                                                    </Label>
+                                                    <Input :placeholder="item.name" class="col-span-3" />
+                                                </div>
+                                            </template>
+                                            <template v-slot:footer>
+                                                <Button type="submit" @click="postOrganization()">
+                                                    Save changes
+                                                </Button>
+                                            </template>
+                                        </Modal>
+
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <span>Support</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem @click.stop=" state.removeOrganization(item.id)">
+                                        <span>Delete</span>
+                                        <DropdownMenuShortcut><SVG
+                                                :d="'M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z'"
+                                                class="cursor-pointer" title="delete" :color="'red'"></SVG>
+                                        </DropdownMenuShortcut>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
         </div>
-        <div v-else>
-            loading
-        </div>
-
-        <modal class="float-right" />
-
-
-        <Table>
-
-            <TableCaption>A list of your recent invoices.</TableCaption>
-            <TableHeader>
-                <TableRow>
-                    <TableHead class="w-[100px]">
-                        #
-                    </TableHead>
-                    <TableHead>id</TableHead>
-                    <TableHead>Организация</TableHead>
-                    <TableHead class="text-right">
-                        Жалобы
-                    </TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                <TableRow v-for="(item, i) in list" :key="item.id">
-                    <TableCell class="font-medium">
-                        {{ i }}
-                    </TableCell>
-                    <TableCell>{{ item.idDepartament }}</TableCell>
-                    <TableCell>{{ item.name }}</TableCell>
-                    <TableCell class="text-right">
-                        4
-                    </TableCell>
-                    <TableCell>
-                        <SVG :d="'M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z'"
-                            class="cursor-pointer" @click.stop=" state.removeOrganization(item.id)" title="delete"
-                            :color="'red'"></SVG>
-                    </TableCell>
-                </TableRow>
-            </TableBody>
-        </Table>
     </div>
 </template>
 
 <script setup lang="ts">
 import { useStorage } from '~/state/index'
 import { type Organization } from '~/components/formReports/index.vue';
+import navbar from '~/components/navbar/navbar.vue';
 import SVG from '~/components/ui/svg/SVG.vue';
 import {
     Table,
@@ -60,21 +120,48 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table'
-import modal from '~/components/dialog/modal.vue';
+import Modal from '~/components/dialog/modal.vue';
 
+interface Data {
+    [key: string]: string
+}
 
 const state = useStorage();
 let list = ref<Organization[]>([]);
 const loading = ref<boolean>();
 
-watchEffect(() => {
-    if (state.$state.AllOrganization) {
-        loading.value = state.$state.AllOrganization.loading;
-        list.value = state.$state.AllOrganization.List;
-    }
+
+watch(
+    () => state.$state.AllOrganization,
+    (newVal) => {
+        if (newVal) {
+            loading.value = newVal.loading;
+            list.value = newVal.List;
+        }
+    },
+    { immediate: true }
+);
+
+const data: Data = reactive({
+    organization: '',
+    supervisor: ''
 })
+
+const postOrganization = async () => {
+    if (data.organization.trim() === '' || data.supervisor.trim() === '') {
+        console.log('Error')
+    } else {
+        state.createOrganization(data.organization, data.supervisor);
+    }
+};
 
 onMounted(() => {
     state.getAllOrganization();
 })
+
+
+const text = [
+    { title: 'Название организации', example: 'Национальный банк РК', modal: 'organization' },
+    { title: 'Руководитель', example: 'Иванов Иван Иванович', modal: 'supervisor' }
+]
 </script>

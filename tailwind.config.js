@@ -14,6 +14,9 @@ module.exports = {
         "2xl": "1400px",
       },
     },
+    fontFamily: {
+      'body': ['"Open Sans"'],
+    },
     extend: {
       colors: {
         border: "hsl(var(--border))",

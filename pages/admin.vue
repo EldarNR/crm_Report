@@ -9,7 +9,6 @@ import login from '~/components/loginComponents/login.vue';
 import { supabase } from '~/state/supabase/supabase';
 const session = ref(useSupabaseSession())
 
-
 onMounted(async () => {
     supabase.auth.onAuthStateChange((_event, newSession) => {
         session.value = newSession
