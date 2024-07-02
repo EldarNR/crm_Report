@@ -12,6 +12,7 @@
                 <admin />
 
             </div>
+            <vue-qrcode :value="value" @change="onDataUrlChange" />
         </div>
     </div>
 </template>
@@ -19,6 +20,17 @@
 <script setup lang="ts">
 import admin from './admin/admin.vue';
 import { useSupabaseUser } from '#imports';
+import { ref } from 'vue';
+import VueQrcode from 'vue-qrcode';
+
+// Создаем переменные с помощью ref
+const dataUrl = ref(null);
+const value = ref('https://example.com');
+
+// Функция для обновления dataUrl
+const onDataUrlChange = (newDataUrl: null) => {
+    dataUrl.value = newDataUrl;
+};
 
 
 const user = ref(useSupabaseUser());

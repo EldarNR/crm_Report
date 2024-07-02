@@ -252,5 +252,37 @@ export const useStorage = defineStore({
         this.getAllOrganization();
       }
     },
+    async changeStatusReport(id: number | undefined, status: string) {
+      try {
+        const { data, error } = await supabase
+          .from("reports")
+          .update({ status: status })
+          .eq("id", id)
+          .select();
+        if (error) {
+          console.log(error);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    async changeNameOrganizating(id: number, name: string) {
+      try {
+        const { data, error } = await supabase
+          .from("organization")
+          .update({ name: name })
+          .eq("id", id)
+          .select();
+        if (error) {
+          console.log(error);
+        }
+        console.log(data, "Данные успешно изменены!");
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    async searchDescription(text:string){
+      
+    }
   },
 });

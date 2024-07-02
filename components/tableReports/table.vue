@@ -16,7 +16,8 @@
                             <input type="checkbox" class="mr-2" v-model="selectAll"
                                 @click="toggleSelectAll(selectAll)" />
                         </TableHead>
-                        <TableHead v-for="item in headMenu" :key="item" class="text-center cursor-pointer">
+                        <TableHead v-for="(item, i) in headMenu[0].title[language]" :key="i"
+                            class="text-center cursor-pointer">
                             {{ item }}
                         </TableHead>
                     </TableRow>
@@ -92,6 +93,7 @@ let activeReport = ref([]) as unknown as reports;
 let reportShow = ref<boolean>(false);
 const selectAll = ref<boolean>(false);
 const selected = ref<number[]>([]);
+let language = ref<string>('ru')
 
 onMounted(() => {
     state.getAllReports();
@@ -139,5 +141,6 @@ const removeReport = (id?: number) => {
     }
 }
 
-const headMenu = ['#', 'report', 'status'];
+const headMenu: any = [{ title: { ru: ['#', 'Жалобы', 'Статус'], kz: ['#', 'Шағымдар', 'Мәртебесі',] } }];
+
 </script>

@@ -1,28 +1,17 @@
 <template>
     <section class="flex items-center justify-center">
-        <div class="mx-auto my-auto w-[500px] px-4 py-16 sm:px-6 lg:px-8">
+        <div class="mx-auto my-auto md:w-[500px] px-4 py-16 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 gap-x-16 gap-y-8">
                 <div class="rounded-lg bg-white p-8 shadow-lg lg:col-span-3 lg:p-12">
 
                     <Alerts :title="text" :description="description" :svg="svg" :open="isOpen"
                         @update:open="isOpen = $event" />
 
-                    <p class="text-2xl font-bold text-center p-2">Заполните форму</p>
+                    <p class="text-2xl font-bold text-center p-2 md:text-2xl sm:text-md">Заполните форму</p>
 
-                    <Select v-model="form.departament">
-                        <SelectTrigger>
-                            <SelectValue :placeholder="selectedOrganization?.name || 'Выберите организацию'" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>Организации</SelectLabel>
-                                <SelectItem v-for="item in listOrganization" :key="item.idDepartament"
-                                    :value="item.name" @click="selectOrganization(item)">
-                                    {{ item.name }}
-                                </SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
+                    <p class="text-md font-medium text-center">{{ selectedOrganization?.name }}</p>
+
+
 
                     <label class="flex cursor-pointer items-center justify-center gap-4 p-2">
                         <SVG :title="'incognito-circle'"

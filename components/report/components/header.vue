@@ -22,7 +22,7 @@
                     </div>
                 </div>
 
-                <div class="">
+                <div class="text-xs">
                     <h1>{{ props.date }}</h1>
                 </div>
             </div>
