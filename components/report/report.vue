@@ -9,9 +9,33 @@
                 class="border-2 h-[200px] p-2" />
         </div>
         <div class="grid grid-flow-col gap-2 border-2 p-6">
-            <Button class="bg-green-400"
-                @click="state.changeStatusReport(report?.list.id, 'viewed')">Рассмотрено</Button>
-            <Button class="bg-red-400" @click="state.changeStatusReport(report?.list.id, 'reject')">Отклонить</Button>
+
+            <Modal :title="'Заполните поле'" :description="'Напишите причину '">
+                <template v-slot:trigger>
+
+                    <Button>Статус</Button>
+
+                </template>
+                <template v-slot:body>
+                    <div class="grid grid-cols-4 items-center gap-4">
+                        <Label for="name" class="text-right text-xs">Причина:</Label>
+                        <Input v-model="reason" class="col-span-3" />
+                    </div>
+                </template>
+                <template v-slot:footer>
+                    <div class="grid grid-cols-4 items-center gap-4">
+                        <Button type="submit" class="bg-green-400 "
+                            @click.stop="postRespon(report?.list.id, 'viewed', reason)"> Рассмотрено</Button>
+                        <Button type="submit" class="bg-red-400"
+                            @click.stop="postRespon(report?.list.id, 'reject', reason)">Отклонить</Button>
+                    </div>
+
+                    <!-- <Button type="submit" >
+                        Save changes
+                    </Button> -->
+                </template>
+            </Modal>
+
 
         </div>
     </div>
@@ -23,6 +47,7 @@ import { ref, onMounted } from 'vue';
 import headerReport from './components/header.vue';
 import bodyReport from './components/body.vue';
 import { useStorage } from '~/state';
+import Modal from '../dialog/modal.vue';
 
 interface Report {
     list: {
@@ -42,6 +67,16 @@ const state = useStorage();
 const props = defineProps<Report>();
 const list = ref<Report[]>([]);
 const report = ref<Report | null>(null);
+
+const reason = ref<string>('');
+
+const postRespon = (id: number | undefined, status: string, reason: string) => {
+    if (reason.trim() === '' || id === undefined || status.trim() === '') {
+        console.log('Error, wrong post');
+    } else {
+        state.changeStatusReport(id, status, reason)
+    }
+}
 
 watchEffect(() => {
     list.value.push(props);

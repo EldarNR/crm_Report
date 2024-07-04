@@ -1,14 +1,15 @@
 <template>
     <div class="flex h-screen flex-col justify-between border-e bg-white">
-        <div class="px-4 py-6">
-            <span class="grid h-10 w-32 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">
-                CRM
+        <div class="px-4 mx-auto py-6">
+            <span class=" flex items-center justify-center h-10 w-32 place-content-center rounded-lg text-xs">
+                <img src="https://antikor.gov.kz/branding/sign_in_logo.png" class="w-[60px] h-[50px]" />
             </span>
 
             <ul class="mt-6 space-y-1">
                 <NuxtLink v-for="(item, i) in menu" :key="i" :to="item.to"
-                    class="block rounded-lg bg-gray-100 px-8 py-2 text-sm font-medium text-gray-700">
-                    {{ language === 'ru' ? item.title.ru : item.title.kz }}
+                    class="block rounded-lg px-8 py-2 text-sm font-medium text-gray-700"
+                    :class="{ 'bg-gray-200': rout.path === item.to, 'bg-gray-100': rout.path !== item.to }">
+                    {{ state.$state.language === 'ru' ? item.title.ru : item.title.kz }}
                 </NuxtLink>
             </ul>
         </div>
@@ -33,12 +34,18 @@
 
 <script setup lang="ts">
 import SVG from '../ui/svg/SVG.vue';
+import { useRoute } from 'vue-router';
+import { ref } from 'vue';
+import { useStorage } from '~/state';
 
 const user = useSupabaseUser();
-let language = ref<string>('kz')
+const rout = useRoute();
+const state = useStorage();
 
-let menu = [
-    { title: { ru: 'Жалобы', kz: 'Шағымдар' }, to: '/main/' },
-    { title: { ru: 'Организации', kz: 'Ұйымдар' }, to: '/main/organization' },
+const language = ref<string>('kz');
+
+const menu = [
+    { title: { ru: 'Жалобы', kz: 'Шағымдар' }, to: '/main' },
+    { title: { ru: 'Организации', kz: 'Мекемелер' }, to: '/main/organization' },
 ];
 </script>

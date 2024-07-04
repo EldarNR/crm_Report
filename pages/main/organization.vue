@@ -1,10 +1,10 @@
 <template>
-    <div class="w-full  p-2">
+    <div class="w-full p-2">
         Организации
-        <div class="bg-neutral-50 rounded-lg   border p-2 m-2">
+        <div class="bg-neutral-50 rounded-lg border p-2 m-2">
             <Modal :title="'Создание формы'" :description="'Заполните форму'">
                 <template v-slot:trigger>
-                    <Button variant="outline">Новая организацию</Button>
+                    <Button variant="outline" class="text-xl">+</Button>
                 </template>
                 <template v-slot:body>
                     <div class="grid grid-cols-4 items-center gap-4" v-for="(item, i) in text" :key="i">
@@ -26,9 +26,7 @@
                 <TableHeader>
                     <TableRow>
                         <TableHead class="w-[100px]">#</TableHead>
-                        <TableHead>id</TableHead>
-                        <TableHead>Организация</TableHead>
-                        <TableHead class="text-right">Жалобы</TableHead>
+                        <TableHead v-for="(item, i) in currentHeadMenu" :key="i"> {{ item }}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -36,11 +34,28 @@
                         <TableCell class="font-medium">{{ i }}</TableCell>
                         <TableCell>{{ item.idDepartament }}</TableCell>
                         <TableCell>{{ item.name }}</TableCell>
-                        <TableCell class="text-right">4</TableCell>
+                        <TableCell>4</TableCell>
+                        <TableCell>
+                            <Modal :title="'QR'" :description="''">
+                                <template v-slot:trigger>
+                                    <SVG :title='`qr`' @click.stop
+                                        :d="'M4,4H10V10H4V4M20,4V10H14V4H20M14,15H16V13H14V11H16V13H18V11H20V13H18V15H20V18H18V20H16V18H13V20H11V16H14V15M16,15V18H18V15H16M4,20V14H10V20H4M6,6V8H8V6H6M16,6V8H18V6H16M6,16V18H8V16H6M4,11H6V13H4V11M9,11H13V15H11V13H9V11M11,6H13V10H11V6M2,2V6H0V2A2,2 0 0,1 2,0H6V2H2M22,0A2,2 0 0,1 24,2V6H22V2H18V0H22M2,18V22H6V24H2A2,2 0 0,1 0,22V18H2M22,22V18H24V22A2,2 0 0,1 22,24H18V22H22Z'"></SVG>
+                                </template>
+                                <template v-slot:body>
+                                    <div class="flex justify-center items-center">
+                                        <vue-qrcode :value="url + item.idDepartament" type="image/png" :width="360"
+                                            :color="{ dark: '#000000ff', light: '#ffffffff' }"
+                                            @change="onDataUrlChange" />
+                                    </div>
+                                </template>
+                                <template v-slot:footer>
+                                </template>
+                            </Modal>
+                        </TableCell>
                         <TableCell>
                             <DropdownMenu>
                                 <DropdownMenuTrigger as-child>
-                                    <span class="">...</span>
+                                    <span class="cursor-pointer">...</span>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent class="w-56">
                                     <DropdownMenuLabel>Setting</DropdownMenuLabel>
@@ -85,7 +100,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watchEffect } from 'vue';
+import { ref, reactive, onMounted, watchEffect, computed } from 'vue';
+import vueQrcode from 'vue-qrcode';
 import { useStorage } from '~/state/index';
 import { type Organization } from '~/components/formReports/index.vue';
 import SVG from '~/components/ui/svg/SVG.vue';
@@ -108,6 +124,16 @@ const state = useStorage();
 const list = ref<Organization[]>([]);
 const loading = ref<boolean>(true);
 const editName = ref<string>('');
+const language = ref<string>('ru');
+
+// Создаем переменные с помощью ref
+const dataUrl = ref(null);
+const url = ref('http://localhost:3000/report/');
+
+// Функция для обновления dataUrl
+const onDataUrlChange = (newDataUrl: null) => {
+    dataUrl.value = newDataUrl;
+};
 
 watchEffect(() => {
     const allOrganization = state.$state.AllOrganization;
@@ -138,13 +164,18 @@ const changeNameOrganization = async (id: number) => {
         console.log(id, editName.value)
         state.changeNameOrganizating(id, editName.value);
     }
-
 }
-
 
 onMounted(() => {
     state.getAllOrganization();
 });
+
+const headMenu: any = {
+    ru: ['id', 'Организация', 'Жалобы', 'QR', 'Действия'],
+    kz: ['id', 'Мекеме', 'Шағымдар', 'QR', 'Әрекеттер'],
+};
+
+const currentHeadMenu = computed(() => headMenu[state.$state.language]);
 
 const text = [
     { title: 'Название организации', example: 'Национальный банк РК', modal: 'organization' },

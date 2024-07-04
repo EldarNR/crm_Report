@@ -3,7 +3,7 @@
         <p class="block h-16 lg:order-last lg:col-span-5 lg:h-full xl:col-span-6">
             <report v-if="reportShow" :list="activeReport" />
         <div v-else class=" font-bold text-2xl">
-            Выберите из списка
+            <p>{{ state.$state.language === 'ru' ? 'Выберите из списка' : 'Тізімнен таңдаңыз' }}</p>
         </div>
         </p>
         <div
@@ -16,7 +16,7 @@
                             <input type="checkbox" class="mr-2" v-model="selectAll"
                                 @click="toggleSelectAll(selectAll)" />
                         </TableHead>
-                        <TableHead v-for="(item, i) in headMenu[0].title[language]" :key="i"
+                        <TableHead v-for="(item, i) in headMenu[0].title[state.$state.language]" :key="i"
                             class="text-center cursor-pointer">
                             {{ item }}
                         </TableHead>
@@ -93,7 +93,6 @@ let activeReport = ref([]) as unknown as reports;
 let reportShow = ref<boolean>(false);
 const selectAll = ref<boolean>(false);
 const selected = ref<number[]>([]);
-let language = ref<string>('ru')
 
 onMounted(() => {
     state.getAllReports();

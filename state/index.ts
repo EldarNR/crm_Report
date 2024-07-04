@@ -34,6 +34,10 @@ export const useStorage = defineStore({
       List: [] as Organization[],
       loading: true as boolean,
     },
+
+    FindReport: { Loading: false, Data: {} },
+
+    language: "kz" as string,
   }),
   actions: {
     RangeError(message: string, checker: string) {
@@ -252,11 +256,15 @@ export const useStorage = defineStore({
         this.getAllOrganization();
       }
     },
-    async changeStatusReport(id: number | undefined, status: string) {
+    async changeStatusReport(
+      id: number | undefined,
+      status: string,
+      respons: string
+    ) {
       try {
         const { data, error } = await supabase
           .from("reports")
-          .update({ status: status })
+          .update({ status: status, respons: respons })
           .eq("id", id)
           .select();
         if (error) {
@@ -281,8 +289,39 @@ export const useStorage = defineStore({
         console.log(e);
       }
     },
-    async searchDescription(text:string){
-      
-    }
+    async searchDescription(text: string) {},
+
+    async searchById(id: number | string) {
+      this.$state.FindReport.Loading = true;
+      try {
+        let { data: reports, error } = await supabase
+          .from("reports")
+          .select("*")
+          .eq("id", id);
+
+        if (error) {
+          console.log("Error:", error);
+        } else if (reports === null) {
+          console.log("No reports found for ID:", id);
+        } else {
+          console.log(
+            "Reports found:",
+            (this.$state.FindReport.Data = reports)
+          );
+        }
+      } catch (e) {
+        console.log("Exception caught:", e);
+      } finally {
+        this.$state.FindReport.Loading = false;
+      }
+    },
+
+    changeLanguage() {
+      if (this.$state.language === "kz") {
+        this.$state.language = "ru";
+      } else {
+        this.$state.language = "kz";
+      }
+    },
   },
 });
