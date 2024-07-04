@@ -128,7 +128,7 @@ const language = ref<string>('ru');
 
 // Создаем переменные с помощью ref
 const dataUrl = ref(null);
-const url = ref('http://localhost:3000/report/');
+const url = ref('http://crm-report.vercel.app/report/');
 
 // Функция для обновления dataUrl
 const onDataUrlChange = (newDataUrl: null) => {
