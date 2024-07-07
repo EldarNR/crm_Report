@@ -230,11 +230,11 @@ export const useStorage = defineStore({
         report.discription.includes(words)
       );
     },
-    async createOrganization(organization: string, supervisor: string) {
+    async createOrganization(organization: string[], supervisor: string) {
       try {
         const { data, error } = await supabase
           .from("organization")
-          .insert([{ name: organization, supervisor: supervisor }])
+          .insert([{ nameArray: organization, supervisor: supervisor }])
           .select();
         if (error) {
           console.log(error);

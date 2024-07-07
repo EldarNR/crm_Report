@@ -94,6 +94,7 @@ export interface Organization {
     id: number;
     idDepartament: number;
     name: string;
+    nameArray: string[];
 }
 
 const state = useStorage();

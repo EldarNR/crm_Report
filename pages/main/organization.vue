@@ -12,6 +12,7 @@
                             {{ item.title }}
                         </Label>
                         <Input v-model="data[item.modal]" :placeholder="'пример: ' + item.example" class="col-span-3" />
+
                     </div>
                 </template>
                 <template v-slot:footer>
@@ -29,11 +30,15 @@
                         <TableHead v-for="(item, i) in currentHeadMenu" :key="i"> {{ item }}</TableHead>
                     </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody v-if="list.length !== 0 || list !== undefined || list !== null">
                     <TableRow v-for="(item, i) in list" :key="item.id">
                         <TableCell class="font-medium">{{ i }}</TableCell>
                         <TableCell>{{ item.idDepartament }}</TableCell>
-                        <TableCell>{{ item.name }}</TableCell>
+                        <!-- <TableCell>{{ state.$state.language === 'ru' ? item.nameArray[0][0] : item.nameArray[0][1] }}
+                        </TableCell> -->
+                        <TableCell>{{ item.nameArray !== null ? (state.$state.language === 'ru' ? item.nameArray[0] :
+                            item.nameArray[1]) : 'Данных нету!' }}
+                        </TableCell>
                         <TableCell>4</TableCell>
                         <TableCell>
                             <Modal :title="'QR'" :description="''">
@@ -94,6 +99,7 @@
                         </TableCell>
                     </TableRow>
                 </TableBody>
+                <div v-else>Loading</div>
             </Table>
         </div>
     </div>
@@ -124,7 +130,7 @@ const state = useStorage();
 const list = ref<Organization[]>([]);
 const loading = ref<boolean>(true);
 const editName = ref<string>('');
-const language = ref<string>('ru');
+
 
 // Создаем переменные с помощью ref
 const dataUrl = ref(null);
@@ -144,15 +150,20 @@ watchEffect(() => {
 });
 
 const data: Data = reactive({
-    organization: '',
+    organizationRU: '',
+    organizationKZ: '',
     supervisor: ''
 });
 
 const postOrganization = async () => {
-    if (data.organization.trim() === '' || data.supervisor.trim() === '') {
+    if (data.organizationRU.trim() === '' || data.organizationKZ.trim() === '' || data.supervisor.trim() === '') {
         console.log('Error, post input empty!');
     } else {
-        state.createOrganization(data.organization, data.supervisor);
+        const array = [data.organizationRU, data.organizationKZ,];
+        state.createOrganization(array, data.supervisor);
+        console.log(array, data.supervisor)
+        data.organizationRU = '', data.organizationKZ = '', data.supervisor = ''
+
     }
 };
 
@@ -178,9 +189,8 @@ const headMenu: any = {
 const currentHeadMenu = computed(() => headMenu[state.$state.language]);
 
 const text = [
-    { title: 'Название организации', example: 'Национальный банк РК', modal: 'organization' },
-    { title: 'Руководитель', example: 'Иванов Иван Иванович', modal: 'supervisor' }
+    { title: 'Название организации', example: 'Национальный банк РК', modal: 'organizationRU' },
+    { title: 'Ұйымның атауы', example: 'Ұлттық банк ҚР', modal: 'organizationKZ' },
+    { title: 'Руководитель/Басшы', example: 'Иванов Иван Иванович', modal: 'supervisor' }
 ];
 </script>
-
-<style scoped></style>

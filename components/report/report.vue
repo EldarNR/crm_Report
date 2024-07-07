@@ -4,9 +4,9 @@
             <headerReport :name="report?.list.full_name
                 ?? ''" :date="report?.list.created_at ?? ''" :email="report?.list.email ?? ''"
                 :phone="report?.list.phone ?? ''" :organization="report?.list.departament ?? 'не указан'"
-                class="border-2" />
+                class="border-2 " />
             <bodyReport :description="report?.list.description ?? ''" :fileUid="report?.list.fileUid"
-                class="border-2 h-[200px] p-2" />
+                class="border-2 h-[200px] p-2 overflow-scroll" />
         </div>
         <div class="grid grid-flow-col gap-2 border-2 p-6">
 
