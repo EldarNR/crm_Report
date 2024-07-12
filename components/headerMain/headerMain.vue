@@ -1,20 +1,21 @@
 <template>
-    <div class="bg-gray-50">
-        <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-            <div class="sm:flex sm:items-center sm:justify-between">
-                <div class="text-center sm:text-left">
-                    <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl"> {{ state.$state.language === 'ru' ?
-                        text.ru : text.kz}}
+    <div class="bg-gray-50 w-[983px]  mx-auto">
+        <div class="mx-auto  p-2 px-4 py-8 ">
+            <div class='relative '>
+                <div class="block text-center">
+                    <h1 class="text-2xl text-center font-semibold text-gray-900"> {{ state.$state.language
+                        ===
+                        'ru' ?
+                        text.ru : text.kz }}
                     </h1>
-
-                    <p class="mt-1.5 text-sm text-gray-500"></p>
                 </div>
 
-                <admin />
+                <admin class="absolute ml-2 right-0 bottom-0 top-0" />
 
             </div>
 
         </div>
+        <div class=" h-[2px] bg-[#E5E5E5]" />
     </div>
 </template>
 
@@ -28,6 +29,6 @@ const state = useStorage();
 const user = ref(useSupabaseUser());
 const router = useRouter();
 
-const text = { ru: 'Учетная запись администратора', kz: 'Әкімші тіркелгісі' }
+const text = { ru: 'Жалобы', kz: 'Шағымдар' }
 
 </script>

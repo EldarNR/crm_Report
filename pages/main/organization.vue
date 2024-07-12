@@ -1,7 +1,7 @@
 <template>
-    <div class="w-full p-2">
+    <div>
         Организации
-        <div class="bg-neutral-50 rounded-lg border p-2 m-2">
+        <div class="bg-neutral-50 rounded-lg border">
             <Modal :title="'Создание формы'" :description="'Заполните форму'">
                 <template v-slot:trigger>
                     <Button variant="outline" class="text-xl">+</Button>
@@ -12,48 +12,44 @@
                             {{ item.title }}
                         </Label>
                         <Input v-model="data[item.modal]" :placeholder="'пример: ' + item.example" class="col-span-3" />
-
                     </div>
                 </template>
                 <template v-slot:footer>
-                    <Button type="submit" @click="postOrganization()">
+                    <Button type="submit" @click="postOrganization">
                         Создать
                     </Button>
                 </template>
             </Modal>
 
             <Table>
-                <!-- <TableCaption>A list of your recent invoices.</TableCaption> -->
                 <TableHeader>
                     <TableRow>
                         <TableHead class="w-[100px]">#</TableHead>
-                        <TableHead v-for="(item, i) in currentHeadMenu" :key="i"> {{ item }}</TableHead>
+                        <TableHead v-for="(item, i) in currentHeadMenu" :key="i">{{ item }}</TableHead>
                     </TableRow>
                 </TableHeader>
-                <TableBody v-if="list.length !== 0 || list !== undefined || list !== null">
+                <TableBody v-if="list && list.length">
                     <TableRow v-for="(item, i) in list" :key="item.id">
-                        <TableCell class="font-medium">{{ i }}</TableCell>
+                        <TableCell class="font-medium">{{ i + 1 }}</TableCell>
                         <TableCell>{{ item.idDepartament }}</TableCell>
-                        <!-- <TableCell>{{ state.$state.language === 'ru' ? item.nameArray[0][0] : item.nameArray[0][1] }}
-                        </TableCell> -->
-                        <TableCell>{{ item.nameArray !== null ? (state.$state.language === 'ru' ? item.nameArray[0] :
-                            item.nameArray[1]) : 'Данных нету!' }}
+                        <TableCell>
+                            {{ item.nameArray && item.nameArray.length > 1
+                                ? (state.$state.language === 'ru' ? item.nameArray[0] : item.nameArray[1])
+                                : 'Данных нет!'
+                            }}
                         </TableCell>
                         <TableCell>4</TableCell>
                         <TableCell>
                             <Modal :title="'QR'" :description="''">
                                 <template v-slot:trigger>
-                                    <SVG :title='`qr`' @click.stop
+                                    <SVG :title="'qr'" @click.stop
                                         :d="'M4,4H10V10H4V4M20,4V10H14V4H20M14,15H16V13H14V11H16V13H18V11H20V13H18V15H20V18H18V20H16V18H13V20H11V16H14V15M16,15V18H18V15H16M4,20V14H10V20H4M6,6V8H8V6H6M16,6V8H18V6H16M6,16V18H8V16H6M4,11H6V13H4V11M9,11H13V15H11V13H9V11M11,6H13V10H11V6M2,2V6H0V2A2,2 0 0,1 2,0H6V2H2M22,0A2,2 0 0,1 24,2V6H22V2H18V0H22M2,18V22H6V24H2A2,2 0 0,1 0,22V18H2M22,22V18H24V22A2,2 0 0,1 22,24H18V22H22Z'"></SVG>
                                 </template>
                                 <template v-slot:body>
                                     <div class="flex justify-center items-center">
                                         <vue-qrcode :value="url + item.idDepartament" type="image/png" :width="360"
-                                            :color="{ dark: '#000000ff', light: '#ffffffff' }"
-                                            @change="onDataUrlChange" />
+                                            :color="{ dark: '#000000ff', light: '#ffffffff' }" />
                                     </div>
-                                </template>
-                                <template v-slot:footer>
                                 </template>
                             </Modal>
                         </TableCell>
@@ -105,6 +101,7 @@
     </div>
 </template>
 
+
 <script setup lang="ts">
 import { ref, reactive, onMounted, watchEffect, computed } from 'vue';
 import vueQrcode from 'vue-qrcode';
@@ -114,7 +111,6 @@ import SVG from '~/components/ui/svg/SVG.vue';
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -131,15 +127,8 @@ const list = ref<Organization[]>([]);
 const loading = ref<boolean>(true);
 const editName = ref<string>('');
 
-
-// Создаем переменные с помощью ref
 const dataUrl = ref(null);
 const url = ref('http://crm-report.vercel.app/report/');
-
-// Функция для обновления dataUrl
-const onDataUrlChange = (newDataUrl: null) => {
-    dataUrl.value = newDataUrl;
-};
 
 watchEffect(() => {
     const allOrganization = state.$state.AllOrganization;
@@ -156,23 +145,21 @@ const data: Data = reactive({
 });
 
 const postOrganization = async () => {
-    if (data.organizationRU.trim() === '' || data.organizationKZ.trim() === '' || data.supervisor.trim() === '') {
+    if (!data.organizationRU.trim() || !data.organizationKZ.trim() || !data.supervisor.trim()) {
         console.log('Error, post input empty!');
     } else {
-        const array = [data.organizationRU, data.organizationKZ,];
+        const array = [data.organizationRU, data.organizationKZ];
         state.createOrganization(array, data.supervisor);
-        console.log(array, data.supervisor)
-        data.organizationRU = '', data.organizationKZ = '', data.supervisor = ''
-
+        data.organizationRU = '';
+        data.organizationKZ = '';
+        data.supervisor = '';
     }
 };
 
 const changeNameOrganization = async (id: number) => {
-    if (editName.value.trim() === '') {
+    if (!editName.value.trim()) {
         console.log('Error, edit input empty!')
-    }
-    else {
-        console.log(id, editName.value)
+    } else {
         state.changeNameOrganizating(id, editName.value);
     }
 }

@@ -2,9 +2,11 @@ import { defineStore } from "pinia";
 import { useRouter } from "vue-router";
 import { createBrowserClient } from "@supabase/ssr";
 import { type Organization } from "~/components/formReports/index.vue";
+import { supabase } from "./supabase/supabase";
 
 interface reports {
   FullName?: string;
+  created_at: string;
   email?: string;
   phone?: string;
   file: File | null;
@@ -13,13 +15,6 @@ interface reports {
   anonymouseMode: boolean;
   departament: string;
 }
-
-var supabaseUrl = "https://ustowvbylqottnlzxouw.supabase.co" as string;
-var supabaseKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzdG93dmJ5bHFvdHRubHp4b3V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTY4ODg0ODAsImV4cCI6MjAzMjQ2NDQ4MH0.8frIdjCjrZjoXLmdZ_6LaNVdx1OXJJSN2O63qz9Vw60" as string;
-
-var supabase = createBrowserClient(supabaseUrl, supabaseKey);
-
 export const useStorage = defineStore({
   id: "Main",
   state: () => ({
@@ -44,6 +39,11 @@ export const useStorage = defineStore({
 
     language: "kz" as string,
   }),
+
+  getters: {
+    list: (state) => state.AllReports,
+  },
+
   actions: {
     RangeError(message: string, checker: string) {
       const closeAlert = () => {
@@ -318,6 +318,21 @@ export const useStorage = defineStore({
         console.log("Exception caught:", e);
       } finally {
         this.$state.FindReport.Loading = false;
+      }
+    },
+
+    sortByData(respons: boolean) {
+      const parseDate = (dateString: any) => new Date(dateString).getTime();
+      if (respons) {
+        this.AllReports.List.sort(
+          (a, b) => parseDate(a.created_at) - parseDate(b.created_at)
+        );
+      } else if (!respons) {
+        this.AllReports.List.sort(
+          (a, b) => parseDate(b.created_at) - parseDate(a.created_at)
+        );
+      } else {
+        console.log("Error by sorting");
       }
     },
 

@@ -1,14 +1,14 @@
 <template>
     <ClientOnly>
-        <div class="bg-white border-2 rounded-md divide-slate-200">
-            <div>
-                <header-main />
-                <div class="mt-8">
-                    <div class="w-full bg-neutral-50 rounded-lg shadow border">
-                        <tables />
-                    </div>
-                </div>
+        <div class="flex w-full h-screen flex-col bg-[#FAFAFA]">
+
+            <header-main />
+
+            <div class="w-full rounded-lg">
+                <tables />
             </div>
+
+
         </div>
     </ClientOnly>
 </template>
