@@ -1,6 +1,6 @@
 <template>
-    <div class="flex h-screen flex-col justify-between border-e py-14 items-center">
-        <div class="  flex items-center flex-col  w-full">
+    <div class="flex h-screen flex-col justify-between border-e  items-center">
+        <div class="  flex items-center flex-col  py-12 ">
             <span class=" flex items-center justify-center">
                 <svg width="77" height="64" viewBox="0 0 77 64" fill="none" xmlns="http://www.w3.org/2000/svg"
                     xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -106,16 +106,12 @@
 </template>
 
 <script setup lang="ts">
-import SVG from '../ui/svg/SVG.vue';
 import { useRoute } from 'vue-router';
-import { ref } from 'vue';
 import { useStorage } from '~/state';
 
 const user = useSupabaseUser();
 const rout = useRoute();
 const state = useStorage();
-
-const language = ref<string>('kz');
 
 const menu = [
     { title: { ru: 'Жалобы', kz: 'Шағымдар' }, to: '/main' },

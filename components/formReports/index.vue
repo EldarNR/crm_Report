@@ -1,6 +1,6 @@
 <template>
     <section class="flex items-center justify-center">
-        <div class="mx-auto my-auto md:w-[500px] px-4 py-16 sm:px-6 lg:px-8">
+        <div class="mx-auto my-auto md:w-[500px] px-4 py-10 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 gap-x-16 gap-y-8">
                 <div class="rounded-lg bg-white p-8 shadow-lg lg:col-span-3 lg:p-12">
 

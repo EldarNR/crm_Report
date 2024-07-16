@@ -38,8 +38,8 @@ import { useStorage } from '~/state'
 
 
 interface props {
-    title: string,
-    description: string
+    title?: string,
+    description?: string
 }
 
 const props = defineProps<props>();

@@ -4,17 +4,20 @@ import { createBrowserClient } from "@supabase/ssr";
 import { type Organization } from "~/components/formReports/index.vue";
 import { supabase } from "./supabase/supabase";
 
-interface reports {
-  FullName?: string;
+export interface reports {
+  id: number;
+  full_name?: string;
   created_at: string;
   email?: string;
   phone?: string;
   file: File | null;
-  discription: string;
+  description: string;
   date: string;
-  anonymouseMode: boolean;
+  anonymous: boolean;
   departament: string;
+  fileUid: string;
 }
+
 export const useStorage = defineStore({
   id: "Main",
   state: () => ({
@@ -227,7 +230,7 @@ export const useStorage = defineStore({
     search(words: string) {
       console.log(words);
       this.AllReports.List = this.AllReports.List.filter((report) =>
-        report.discription.includes(words)
+        report.description.includes(words)
       );
     },
     async createOrganization(organization: string[], supervisor: string) {
