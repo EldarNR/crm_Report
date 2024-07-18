@@ -1,12 +1,6 @@
 <template>
-    <div class=" max-w-[1111px] ">
-        <!-- <p class="block h-16 lg:order-last lg:col-span-5 lg:h-full xl:col-span-6">
-            <report v-if="reportShow" :list="activeReport" />
-        <div v-else class="font-bold text-2xl">
-            <p>{{ translate('Выберите из списка', 'Тізімнен таңдаңыз') }}</p>
-        </div>
-        </p> -->
-        <div class="flex flex-col items-center justify-start px-8 py-8 ">
+    <div class="max-w-[1111px]">
+        <div class="flex flex-col items-center justify-start px-8 py-8">
             <tool></tool>
             <Table v-if="!loading">
                 <TableHeader>
@@ -51,10 +45,8 @@
                     <TableRow v-if="list.length === 0">
                         <TableCell colspan="100%">List empty</TableCell>
                     </TableRow>
-                    <TableRow v-for="(item, i) in list" :key="item.id" @click="routPush(item.id)"
-                        class="text-center font-medium">
+                    <TableRow v-for="(item, i) in list" :key="item.id" @click="routPush(item.id)" class="font-medium">
                         <input type="checkbox" class="block ml-2 my-auto mt-4" v-model="selected" :value="item.id" />
-
                         <TableCell :key="item.id">
                             {{ i }}
                         </TableCell>
@@ -62,22 +54,23 @@
                             {{ item.id }}
                         </TableCell>
                         <TableCell :key="item.id">
-                            {{ item.departament }}
+                            {{ translate(item.departament[0], item.departament[1]) }}
                         </TableCell>
                         <TableCell :key="item.id">
-                            <div :class="statusClass(item.status)" class="w-[10px] h-[10px] rounded-xl mx-auto" />
+                            {{ formatDate(item.created_at) }}
                         </TableCell>
                         <TableCell :key="item.id">
-                            {{ item.created_at }}
-                        </TableCell>
-                        <TableCell :key="item.id">
-                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" class="mx-auto"
+                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
+                                class="bg-[#5f2121] w-[22px] h-[22px] mx-auto flex item-center justify-center"
                                 @click.stop="removeReport(item.id)" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="22" height="22" rx="4" fill="#646464" />
-                                <path
-                                    d="M5.6665 7.66667H16.3332M9.6665 10.3333V14.3333M12.3332 10.3333V14.3333M6.33317 7.66667L6.99984 15.6667C6.99984 16.0203 7.14031 16.3594 7.39036 16.6095C7.64041 16.8595 7.97955 17 8.33317 17H13.6665C14.0201 17 14.3593 16.8595 14.6093 16.6095C14.8594 16.3594 14.9998 16.0203 14.9998 15.6667L15.6665 7.66667M8.99984 7.66667V5.66667C8.99984 5.48986 9.07008 5.32029 9.1951 5.19526C9.32012 5.07024 9.48969 5 9.6665 5H12.3332C12.51 5 12.6796 5.07024 12.8046 5.19526C12.9296 5.32029 12.9998 5.48986 12.9998 5.66667V7.66667"
-                                    stroke="#F9F9F9" stroke-linecap="round" stroke-linejoin="round" />
+
+                                <path class="bg-red-400"
+                                    d="M0.666504 3.66667H11.3332M4.6665 6.33333V10.3333M7.33317 6.33333V10.3333M1.33317 3.66667L1.99984 11.6667C1.99984 12.0203 2.14031 12.3594 2.39036 12.6095C2.64041 12.8595 2.97955 13 3.33317 13H8.6665C9.02013 13 9.35926 12.8595 9.60931 12.6095C9.85936 12.3594 9.99984 12.0203 9.99984 11.6667L10.6665 3.66667M3.99984 3.66667V1.66667C3.99984 1.48986 4.07008 1.32029 4.1951 1.19526C4.32012 1.07024 4.48969 1 4.6665 1H7.33317C7.50998 1 7.67955 1.07024 7.80458 1.19526C7.9296 1.32029 7.99984 1.48986 7.99984 1.66667V3.66667"
+                                    stroke="#cc1b1b" stroke-linecap="round" stroke-linejoin="round" />
+
                             </svg>
+
+
                         </TableCell>
 
                     </TableRow>
@@ -186,16 +179,26 @@ const removeReport = (id?: number) => {
 
 const translate = (ru: string, kz: string) => state.$state.language === 'ru' ? ru : kz;
 
-const headMenu: any = [{ title: { ru: ['#', 'id', 'Жалобы', 'Статус', 'Дата', 'Действие'], kz: ['#', 'id', 'Шағымдар', 'Мәртебесі', 'Күні', 'Әрекет'] } }];
+const headMenu: any = [{ title: { ru: ['#', 'id', 'Жалобы', 'Дата', 'Действие'], kz: ['#', 'id', 'Шағымдар', 'Күні', 'Әрекет'] } }];
 
 const currentHeadMenu = computed(() => headMenu[0].title[state.$state.language]);
 
 const isDateColumn = (item: string) => item === headMenu[0].title.ru[4] || item === headMenu[0].title.kz[4];
 const isStatusColumn = (item: string) => item === headMenu[0].title.ru[3] || item === headMenu[0].title.kz[3];
 
-const statusClass = (status: string) => {
-    if (status === 'viewed') return 'bg-green-500';
-    if (status === 'awaits') return 'bg-blue-400';
-    return 'bg-red-500';
+// Функция для форматирования даты
+const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const timeZoneOffset = 5 * 60 * 60 * 1000;
+    const localTime = date.getTime() + timeZoneOffset;
+    const localDate = new Date(localTime);
+
+    const day = String(localDate.getUTCDate()).padStart(2, '0');
+    const month = String(localDate.getUTCMonth() + 1).padStart(2, '0');
+    const year = String(localDate.getUTCFullYear()).slice(-2);
+    const hours = String(localDate.getUTCHours()).padStart(2, '0');
+    const minutes = String(localDate.getUTCMinutes()).padStart(2, '0');
+
+    return `${day}.${month}.${year}/${hours}:${minutes}`;
 };
 </script>

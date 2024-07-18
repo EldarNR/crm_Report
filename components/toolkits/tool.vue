@@ -1,16 +1,33 @@
 <template>
-    <div class="flex justify-center items-center bg-neutral-400 p-2 w-[500px] rounded-lg">
-        <div class="flex w-full max-w-sm items-center gap-1.5">
-            <Input type="text" id="search" placeholder="Search" v-model="word" />
+    <div class="flex flex-row justify-center items-center  p-2 w-full rounded-lg">
+        <div class="flex w-full items-center gap-1.5">
+            <Input type="text" id="search" placeholder="Search" v-model="word" class="bg-[#EAEAEA]" />
         </div>
-        <div class="space-y-2 w-[150px] p-2">
-            <select v-if="!loading" v-model="selectedValue" name="Выберите организацию" id="организация"
-                class="w-full rounded-lg sm:text-sm p-2.5" @change="postFilter()">
-                <option disabled class="text-gray-400">Выберите организацию</option>
-                <option value="All">Все</option>
-                <option v-for="item in listOrg" :key="item.id" :value="item.name">{{ item.name }}</option>
-            </select>
-            <div v-else>Loading</div>
+        <div>
+            <Popover>
+                <PopoverTrigger as-child>
+                    <Button variant="outline">
+                        <CalendarIcon class="mr-2 h-4 w-4" />
+                        <template v-if="value.start">
+                            <template v-if="value.end">
+                                {{ df.format(value.start.toDate(getLocalTimeZone())) }} - {{
+                                    df.format(value.end.toDate(getLocalTimeZone())) }}
+                            </template>
+
+                            <template v-else>
+                                {{ df.format(value.start.toDate(getLocalTimeZone())) }}
+                            </template>
+                        </template>
+                        <template v-else>
+                            Pick a date
+                        </template>
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent class="w-auto p-0">
+                    <RangeCalendar v-model="value" initial-focus :number-of-months="2"
+                        @update:start-value="(startDate) => value.start = startDate" />
+                </PopoverContent>
+            </Popover>
         </div>
         <Button type="submit" @click="postSeatch()">
             Search
@@ -23,6 +40,22 @@ import { ref, watchEffect, onMounted } from 'vue';
 import { Input } from '@/components/ui/input';
 import { useStorage } from '~/state';
 import { type Organization } from '../formReports/index.vue';
+import { type Ref } from 'vue'
+import {
+    CalendarDate,
+    DateFormatter,
+    getLocalTimeZone,
+} from '@internationalized/date';
+import { Calendar as CalendarIcon } from 'lucide-vue-next';
+import type { DateRange } from 'radix-vue';
+import { RangeCalendar } from '@/components/ui/range-calendar';
+import { Button } from '@/components/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+
+
+const df = new DateFormatter('en-US', {
+    dateStyle: 'medium',
+})
 
 const state = useStorage();
 const listOrg = ref<Organization[]>([]);
@@ -51,6 +84,12 @@ const search = (text: string) => {
         state.searchDescription(text);
     }
 }
+const currentDate = new Date();
+
+const value = ref({
+    start: new CalendarDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()),
+    end: new CalendarDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()).add({ days: 20 }),
+}) as Ref<DateRange>
 
 watchEffect(() => {
     const allOrganization = state.$state.AllOrganization;

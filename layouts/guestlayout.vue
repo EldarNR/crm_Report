@@ -7,9 +7,6 @@
 
 <script lang="ts" setup>
 import { useRouter } from 'vue-router';
-definePageMeta({
-    middleware: 'set-layout'
-})
 
 const router = useRouter();
 

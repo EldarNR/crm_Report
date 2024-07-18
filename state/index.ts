@@ -16,6 +16,8 @@ export interface reports {
   anonymous: boolean;
   departament: string;
   fileUid: string;
+  status: string[];
+  respons: string;
 }
 
 export const useStorage = defineStore({
@@ -114,7 +116,7 @@ export const useStorage = defineStore({
       message?: string,
       email?: string,
       phone?: string,
-      departament?: string,
+      departament?: string[],
       anonymousMode?: boolean,
       file?: any,
       fileUid?: string
@@ -140,7 +142,7 @@ export const useStorage = defineStore({
           departament: departament,
           anonymous: anonymousMode,
           fileUid: dataProps.uid,
-          status: "awaits",
+          status: ["На рассмотрении", "Тексерісте"],
         });
 
         if (error) {
