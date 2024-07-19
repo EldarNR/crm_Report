@@ -5,39 +5,33 @@
             <Table v-if="!loading">
                 <TableHeader>
                     <TableRow>
-                        <TableHead class="text-center cursor-pointer">
+                        <TableHead class="text-center cursor-pointer w-[30px]">
                             <input type="checkbox" class="mr-2" v-model="selectAll"
                                 @click="toggleSelectAll(selectAll)" />
                         </TableHead>
-                        <TableHead v-for="(item, i) in currentHeadMenu" :key="i" class="text-center cursor-pointer">
-                            <DropdownMenu>
-                                <DropdownMenuTrigger class="border-l-[2px]  border-[#B8B8B8] "><span class="ml-[3px]">{{
-                                    item }}</span>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                    <div v-if="isDateColumn(item)">
-                                        <DropdownMenuLabel>{{ translate('Сортировка по дате', 'Күні бойынша сұрыптау')
-                                            }}</DropdownMenuLabel>
-                                        <DropdownMenuSeparator />
-
-                                        <DropdownMenuItem @click="state.sortByData(true)">Сортировка от старых к новым
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem @click="state.sortByData(false)">Сортировка от новых к старым
-                                        </DropdownMenuItem>
-                                    </div>
-                                    <div v-else-if="isStatusColumn(item)">
-                                        <DropdownMenuLabel>{{ translate('Сортировка по статусу', 'Күй бойынша сұрыптау')
-                                            }}</DropdownMenuLabel>
-                                        <DropdownMenuSeparator />
-
-                                        <DropdownMenuItem>Profile</DropdownMenuItem>
-                                        <DropdownMenuItem>Billing</DropdownMenuItem>
-                                        <DropdownMenuItem>Team</DropdownMenuItem>
-                                        <DropdownMenuItem>Subscription</DropdownMenuItem>
-
-                                    </div>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                        <TableHead v-for="(item, i) in currentHeadMenu" :key="i"
+                            class="cursor-pointer w-[20px]">
+                            <div class="ml-[3px]" :class="i !== 0 ? 'border-l-[2px] border-[#B8B8B8]' : ''">
+                                <p v-if="item !== 'Дата' && item !== 'Күні'">
+                                    {{ item }}
+                                </p>
+                                <div v-else>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger>
+                                            {{ item }}
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent>
+                                            <DropdownMenuLabel>{{ translate('Сортировка по дате',
+                                                'Күні-бойыншасұрыптау') }}</DropdownMenuLabel>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem @click="state.sortByData(true)">Сортировка от старых к
+                                                новым</DropdownMenuItem>
+                                            <DropdownMenuItem @click="state.sortByData(false)">Сортировка от новых к
+                                                старым</DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
+                            </div>
                         </TableHead>
                     </TableRow>
                 </TableHeader>
@@ -46,36 +40,36 @@
                         <TableCell colspan="100%">List empty</TableCell>
                     </TableRow>
                     <TableRow v-for="(item, i) in list" :key="item.id" @click="routPush(item.id)" class="font-medium">
-                        <input type="checkbox" class="block ml-2 my-auto mt-4" v-model="selected" :value="item.id" />
-                        <TableCell :key="item.id">
+                        <TableCell>
+                            <input type="checkbox" v-model="selected" :value="item.id" />
+                        </TableCell>
+                        <TableCell>
                             {{ i }}
                         </TableCell>
-                        <TableCell :key="item.id">
+                        <TableCell>
                             {{ item.id }}
                         </TableCell>
-                        <TableCell :key="item.id">
+                        <TableCell>
                             {{ translate(item.departament[0], item.departament[1]) }}
                         </TableCell>
-                        <TableCell :key="item.id">
+                        <TableCell>
                             {{ formatDate(item.created_at) }}
                         </TableCell>
-                        <TableCell :key="item.id">
-                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
-                                class="bg-[#5f2121] w-[22px] h-[22px] mx-auto flex item-center justify-center"
-                                @click.stop="removeReport(item.id)" xmlns="http://www.w3.org/2000/svg">
-
-                                <path class="bg-red-400"
-                                    d="M0.666504 3.66667H11.3332M4.6665 6.33333V10.3333M7.33317 6.33333V10.3333M1.33317 3.66667L1.99984 11.6667C1.99984 12.0203 2.14031 12.3594 2.39036 12.6095C2.64041 12.8595 2.97955 13 3.33317 13H8.6665C9.02013 13 9.35926 12.8595 9.60931 12.6095C9.85936 12.3594 9.99984 12.0203 9.99984 11.6667L10.6665 3.66667M3.99984 3.66667V1.66667C3.99984 1.48986 4.07008 1.32029 4.1951 1.19526C4.32012 1.07024 4.48969 1 4.6665 1H7.33317C7.50998 1 7.67955 1.07024 7.80458 1.19526C7.9296 1.32029 7.99984 1.48986 7.99984 1.66667V3.66667"
-                                    stroke="#cc1b1b" stroke-linecap="round" stroke-linejoin="round" />
-
-                            </svg>
-
-
+                        <TableCell>
+                            <div class="flex items-center justify-center bg-[#646464] w-[22px] h-[22px] rounded-md mx-auto hover:bg-red-600 cursor-pointer"
+                                @click.stop="removeReport(item.id)">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M2.6665 4.66667H13.3332M6.6665 7.33333V11.3333M9.33317 7.33333V11.3333M3.33317 4.66667L3.99984 12.6667C3.99984 13.0203 4.14031 13.3594 4.39036 13.6095C4.64041 13.8595 4.97955 14 5.33317 14H10.6665C11.0201 14 11.3593 13.8595 11.6093 13.6095C11.8594 13.3594 11.9998 13.0203 11.9998 12.6667L12.6665 4.66667M5.99984 4.66667V2.66667C5.99984 2.48986 6.07008 2.32029 6.1951 2.19526C6.32012 2.07024 6.48969 2 6.6665 2H9.33317C9.50998 2 9.67955 2.07024 9.80458 2.19526C9.9296 2.32029 9.99984 2.48986 9.99984 2.66667V4.66667"
+                                        stroke="#F9F9F9" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </div>
                         </TableCell>
-
                     </TableRow>
                 </TableBody>
             </Table>
+
             <span v-else>Loading</span>
         </div>
     </div>
